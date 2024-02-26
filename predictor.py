@@ -86,19 +86,27 @@ try:
 except:
     matplotlib.use('TkAgg')
 
+path_to_weights = os.environ.get('WEIGHTS_PATH')
+
 sam_checkpoint = 'sam_vit_h_4b8939.pth'
+full_path = os.path.join(path_to_weights, sam_checkpoint)
 model_type = "vit_h"
 
 device = "cuda" if torch.cuda.is_available() else 'cpu'
 
-sam = sam_model_registry[model_type](checkpoint=sam_checkpoint)
+sam = sam_model_registry[model_type](checkpoint=full_path)
 sam.to(device=device)
 
 predictor = SamPredictor(sam)
 
-names = np.load("samples.npy", allow_pickle=True)
-labels = np.load("labels.npy", allow_pickle=True)
+path_to_labels= os.environ.get('LABELS')
+path_to_samples= os.environ.get('SAMPLES')
+sam_checkpoint = 'sam_vit_h_4b8939.pth'
 
+names = np.load(os.path.join(path_to_samples, "samples.npy"), allow_pickle=True)
+print(names)
+labels = np.load(os.path.join(path_to_labels, "labels.npy"), allow_pickle=True)
+print(labels)
 # %%
 
 first = input("Do you want to load previous work? -y -n\n")
@@ -166,7 +174,7 @@ f = False
 ## start looping through samples: 
 while c < 400 and not f:
     msk = []  # masks for each samples
-
+    print("yo damn this is some shit code")
     gp = []  # green points
     rp = []  # red points
     image = names[c]  # samples c
@@ -177,7 +185,9 @@ while c < 400 and not f:
     rmv = False
     mask = 0
     # image=np.array(((image+1)/2)*255,dtype='uint8') 
+    print("setting image")
     predictor.set_image(image)
+    print("image set")
     inc = ""
     co = 0
     bs = 0
@@ -208,7 +218,9 @@ while c < 400 and not f:
         current_star_size = SMALL_STAR_SIZE
         current_green_red_dot_size = SMALL_GREEN_RED_DOT_SIZE
         # get_ipython().run_line_magic('matplotlib', 'qt')
+        print("beep1")
         fig, ax = plt.subplots(1, 3, figsize=(15, 7))
+        print("beep2")
         if green and red:
             ax[0].plot(greenx, greeny, 'go', markersize=5)
             ax[1].plot(greenx, greeny, 'go', markersize=5)
@@ -471,10 +483,12 @@ while c < 400 and not f:
                 
 
         # Create a figure and display the image
-
+        print("beep")
         a = ax[0].plot()
+        print("boop")
         b = ax[1].plot()
         ax[0].imshow(image)
+        print("supposedly im showing an image")
         ax[1].imshow(label)
         # Connect mouse click and keyboard key events
         fig.canvas.mpl_connect('button_press_event', onclick)
@@ -490,28 +504,7 @@ while c < 400 and not f:
         # After closing the image window, you can access the green and red pixel coordinate lists
 
         # To select the truck, choose a point on it. Points are input to the model in (x,y) format and come with labels 1 (foreground point) or 0 (background point). Multiple points can be input; here we use only one. The chosen point will be shown as a star on the image.
-        # print("Hereeeeeeeee")
 
-        # ws['B'+str(c+2)]=str(len(green)) 
-        # ws['C'+str(c+2)]=str(len(red))
-        # ws['D'+str(c+2)]=str()
-        # input_point=np.concatenate((green,red))
-        # input_label=np.concatenate(([1]*len(green),[0]*len(red)))
-
-        # masks, scores, logits = predictor.predict(
-        #     point_coords=input_point,
-        #     point_labels=input_label,
-        #     multimask_output=True,
-        # )
-
-        # sleep(1)
-        # if np.max(score)<0.8:
-        #     print("your score should be more than 0.8, try again")
-        #     inc=""
-        #     co+=1
-        #     if co>=2:
-        #         inc=input("you tried more than 10 times\nYou can continue and save the best score ("+str(max(score))+")\nif you want to continue press y")
-        # else:
         inc = "y"
         print(inc)
 

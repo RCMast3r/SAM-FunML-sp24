@@ -174,7 +174,6 @@ f = False
 ## start looping through samples: 
 while c < 400 and not f:
     msk = []  # masks for each samples
-    print("yo damn this is some shit code")
     gp = []  # green points
     rp = []  # red points
     image = names[c]  # samples c
